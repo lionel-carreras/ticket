@@ -1,0 +1,157 @@
+{% extends 'soporte/app.html' %}
+{% load static %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+{% block title %}Dashboard Agente{% endblock %}
+
+
+{% block content %}
+<div class="container py-5">
+  <h2 
+  class="pricing-card text-center mb-4" 
+  style="font-style:oblique; background-color:#dae9f1; color:#000;">Mis Tickets</h2><br>
+  <div class="row gx-4 align-items-stretch">
+
+    {# ===== COL 1: ABIERTOS ===== #}
+    <div class="col-12 col-md-4 border-end d-flex flex-column">
+      
+      <div class="overflow-auto" style="max-height:75vh;">
+        <div class="d-flex flex-column gap-3">
+        {% for ticket in abiertos %}
+          <div class="pricing-card">
+            <div class="pricing-block-content">
+              <div class="pricing-plan">{{ ticket.titulo }}</div>
+              <div class="price-value">Abierto</div>
+              <div class="pricing-note text-truncate">{{ ticket.descripcion }}</div>
+              <div class="check-list">
+                <div class="check-list-item"><i class="fas fa-user" title="Usuario del Ticket"></i> {{ ticket.creado_por.username }}</div>
+                <div class="check-list-item"><i class="fas fa-store" title="Sucursal del Usuario"></i> {{ ticket.creado_por.sucursal.nombre }}</div>
+                <div class="check-list-item"><i class="fas fa-map-marker-alt" title="Sucursal del ticket"></i> {{ ticket.sucursal.nombre }}</div>
+                <div class="check-list-item"><i class="fas fa-calendar-alt"></i> {{ ticket.fecha_creado|date:"SHORT_DATETIME_FORMAT" }}</div>
+              </div>
+            </div>
+            <div class="mt-3 d-flex flex-column gap-2">
+              <form action="{% url 'soporte:ticket_assign' ticket.id %}" method="post" class="d-flex">
+                {% csrf_token %}
+                <select name="agente_id" class="form-select form-select-sm me-2" required>
+                  <option value="" disabled selected>Asignar a…</option>
+                  {% for ag in agentes %}
+                    <option value="{{ ag.id }}">{{ ag.username }}</option>
+                  {% endfor %}
+                </select>
+                <button class="btn btn-sm btn-primary"><i class="fas fa-user-plus" title="Asignar agente"></i></button>
+              </form>
+              <div class="d-flex justify-content-between">
+                <a href="{% url 'soporte:detail_ticket' ticket.id %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-eye" title="Ver detalles"></i></a>
+                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#anularModalagente" data-action-url="{% url 'soporte:ticket_anular_agente' ticket.id %}"><i class="fas fa-ban" title="Anular ticket"></i></button>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-muted">No hay tickets abiertos.</p>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    {# ===== COL 2: ASIGNADOS ===== #}
+    <div class="col-12 col-md-4 border-end d-flex flex-column">
+      
+      <div class="overflow-auto" style="max-height:75vh;">
+        <div class="d-flex flex-column gap-3">
+        {% for ticket in asignados %}
+          <div class="pricing-card">
+            <div class="pricing-block-content">
+              <div class="pricing-plan">{{ ticket.titulo }}</div>
+              <div class="price-value">Asignado</div>
+              <div class="pricing-note text-truncate">{{ ticket.descripcion }}</div>
+              <div class="check-list">
+                <div class="check-list-item"><i class="fas fa-user" title="Usuario del Ticket"></i> {{ ticket.creado_por.username }}</div>
+                <div class="check-list-item"><i class="fas fa-store" title="Sucursal del Usuario"></i> {{ ticket.creado_por.sucursal.nombre }}</div>
+                <div class="check-list-item"><i class="fas fa-map-marker-alt" title="Sucursal del ticket"></i> {{ ticket.sucursal.nombre }}</div>
+                <div class="check-list-item"><i class="fas fa-calendar-alt"></i> {{ ticket.fecha_creado|date:"SHORT_DATETIME_FORMAT" }}</div>
+              </div>
+            </div>
+            <div class="mt-3 d-flex gap-2">
+              <form action="{% url 'soporte:ticket_resolve' ticket.id %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-success" title="CERRAR TICKET"><i class="fas fa-check"></i></button>
+              </form>
+              <a href="{% url 'soporte:detail_ticket' ticket.id %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-eye" title="Ver detalles"></i></a>
+              <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#anularModalagente" data-action-url="{% url 'soporte:ticket_anular_agente' ticket.id %}"><i class="fas fa-ban" title="Anular ticket""></i></button>
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-muted">No tienes tickets asignados.</p>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    {# ===== COL 3: RESUELTOS HOY ===== #}
+    <div class="col-12 col-md-4 d-flex flex-column">
+      
+      <div class="overflow-auto" style="max-height:75vh;">
+        <div class="d-flex flex-column gap-3">
+        {% for ticket in resueltos %}
+          <div class="pricing-card">
+            <div class="pricing-block-content">
+              <div class="pricing-plan">{{ ticket.titulo }}</div>
+              <div class="price-value">Resuelto</div>
+              <div class="pricing-note text-truncate">{{ ticket.descripcion }}</div>
+              <div class="check-list">
+                <div class="check-list-item"><i class="fas fa-calendar-check"></i> {{ ticket.fecha_actualizado|date:"SHORT_DATETIME_FORMAT" }}</div>
+              </div>
+            </div>
+            <div class="mt-3 text-end">
+              <a href="{% url 'soporte:detail_ticket' ticket.id %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-eye"></i></a>
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-muted">No hay tickets resueltos hoy.</p>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{# Modal para pedir motivo de anulación #}
+<div class="modal fade" id="anularModalagente" tabindex="-1" aria-labelledby="anularModalagenteLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="anularFormagente" method="post">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="anularModalagenteLabel">Motivo de anulación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="motivoInput" class="form-label">¿Por qué quieres anular el ticket?</label>
+            <textarea id="motivoInput" name="motivo" class="form-control" rows="3" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Anular ticket</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  var anularModalagente = document.getElementById('anularModalagente');
+  anularModalagente.addEventListener('show.bs.modal', function(event) {
+    var button = event.relatedTarget;
+    var actionUrl = button.getAttribute('data-action-url');
+    var form = document.getElementById('anularFormagente');
+    if (!actionUrl.endsWith('/')) actionUrl += '/';
+    form.setAttribute('action', actionUrl);
+    document.getElementById('motivoInput').value = '';
+  });
+</script>
+{% endblock %}
