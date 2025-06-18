@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-a&1jb%*vxiv@mh4l@o8n-289_01mlgak7re*q4h_827ukcn0o!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://ticketbrio-cqbng9bmf7dserbk.eastus-01.azurewebsites.net/']
+ALLOWED_HOSTS = ['ticketbrio-cqbng9bmf7dserbk.eastus-01.azurewebsites.net/']
 
 
 # Application definition
