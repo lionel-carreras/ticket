@@ -86,17 +86,18 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'soportebrio-database'),
-        'USER': os.environ.get('DB_USER', 'dlhbaqkhdf'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', '9LXX9JH3UCfPh$pn'),
-        'HOST': os.environ.get('DB_HOST', 'soportebrio-server.mysql.database.azure.com'),
-        'PORT': os.environ.get('DB_PORT', '3306'),
+        'ENGINE':   'django.db.backends.mysql',
+        'NAME':     os.environ['DB_NAME'],
+        'USER':     os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASSWORD'],
+        'HOST':     os.environ['DB_HOST'],
+        'PORT':     os.environ.get('DB_PORT', '3306'),
         'OPTIONS': {
-            # si tu servidor exige SSL (recomendado):
-            'ssl': {'ca': os.environ.get('MYSQL_SSL_CA_PEM', '/opt/ssl/DigiCertGlobalRootCA.pem')},
+            'ssl': {
+                'ca': os.environ['MYSQL_SSL_CA_PEM'],
+            },
         },
-    }
+    },
 }
 
 
