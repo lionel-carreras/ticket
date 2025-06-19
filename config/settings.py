@@ -89,7 +89,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ.get('DB_NAME', 'soportebrio-database'),
-        'USER': os.environ.get('DB_USER', 'dlhbaqkhdf@soportebrio-server'),
+        'USER': os.environ.get('DB_USER', 'dlhbaqkhdf'),
         'PASSWORD': os.environ.get('DB_PASSWORD', '9LXX9JH3UCfPh$pn'),
         'HOST': os.environ.get('DB_HOST', 'soportebrio-server.mysql.database.azure.com'),
         'PORT': os.environ.get('DB_PORT', '3306'),
