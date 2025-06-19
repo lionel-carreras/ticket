@@ -31,6 +31,10 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    f"https://{ os.environ.get('WEBSITE_HOSTNAME', '') }",
+]
+
 
 # Application definition
 
