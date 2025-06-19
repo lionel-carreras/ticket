@@ -93,10 +93,6 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASSWORD', '9LXX9JH3UCfPh$pn'),
         'HOST': os.environ.get('DB_HOST', 'soportebrio-server.mysql.database.azure.com'),
         'PORT': os.environ.get('DB_PORT', '3306'),
-        'OPTIONS': {
-            # si tu servidor exige SSL (recomendado):
-            'ssl': {'ca': os.environ.get('MYSQL_SSL_CA_PEM', '/home/site/wwwroot/ssl/DigiCertGlobalRootCA.pem')},
-        },
     }
 }
 
