@@ -80,28 +80,39 @@
     crossorigin="anonymous"
   ></script>
 
- {% block extra_js %}
-  <script>
-    //////////////// notificaciones WebSocket ////////////////
+  
+{% block extra_js %}
+<script>
   document.addEventListener('DOMContentLoaded', () => {
-    // 🔓 Desbloqueo silencioso del audio en el primer click o toque:
+    // 1) Desbloqueo silencioso del audio: intentamos tocarlo inmediatamente y también al primer click/touch
     let audioUnlocked = false;
+    const notifySound = new Audio("{% static 'sounds/notify.mp3' %}");
+    const messageSound = new Audio("{% static 'sounds/message.mp3' %}");
+    notifySound.volume = 0;
+    messageSound.volume = 0;
+
     function unlockAudio() {
       if (audioUnlocked) return;
-      const a = new Audio("{% static 'sounds/notify.mp3' %}");
-      a.volume = 0;
-      a.play().finally(() => {
+      // Intentamos reproducir ambos con volumen 0
+      notifySound.play().finally(() => {
         audioUnlocked = true;
-        // opcionalmente guardar en localStorage
+        localStorage.setItem('audioEnabled', 'true');
+      });
+      messageSound.play().finally(() => {
+        audioUnlocked = true;
         localStorage.setItem('audioEnabled', 'true');
       });
       document.removeEventListener('click', unlockAudio);
       document.removeEventListener('touchstart', unlockAudio);
     }
-    document.addEventListener('click', unlockAudio);
-    document.addEventListener('touchstart', unlockAudio);
 
-    // → Ahora abrimos el WebSocket y gestionamos las notificaciones:
+    // Intento inmediato
+    unlockAudio();
+    // Y también al primer click o touch
+    document.addEventListener('click', unlockAudio, { once: true });
+    document.addEventListener('touchstart', unlockAudio, { once: true });
+
+    // 2) Abrimos el WebSocket y mostramos notificaciones
     const userId = "{{ request.user.id|default:'' }}";
     fetch("{% url 'soporte:webpubsub_auth' %}?hub=alerts")
       .then(res => res.json())
@@ -118,24 +129,25 @@
             try { payload = JSON.parse(payload); } catch {}
           }
           const { message, url, notification_type } = payload;
-          // 🎵 Elegimos sonido:
-          const soundSrc = notification_type === 'message'
-            ? "{% static 'sounds/message.mp3' %}"
-            : "{% static 'sounds/notify.mp3' %}";
-          const iconClass = notification_type === 'message' ? 'fa-envelope' : 'fa-bell';
-          // 🔊 Reproducimos si ya desbloqueó:
+          // Elegimos sonido
+          const snd = new Audio(
+            notification_type === 'message' 
+              ? "{% static 'sounds/message.mp3' %}"
+              : "{% static 'sounds/notify.mp3' %}"
+          );
+          // Solo reproducimos si ya desbloqueamos
           if (audioUnlocked || localStorage.getItem('audioEnabled')) {
-            const snd = new Audio(soundSrc);
             snd.volume = 0.5;
             snd.play().catch(()=>{});
           }
-          // 🍞 Mostramos toast:
+          // Insertamos toast
+          const icon = notification_type === 'message' ? 'fa-envelope' : 'fa-bell';
           const html = `
             <div class="toast align-items-center text-white bg-info mb-3"
                  role="alert" aria-live="assertive" aria-atomic="true">
               <div class="d-flex">
                 <div class="toast-body">
-                  <i class="fas ${iconClass} me-2"></i>${message}
+                  <i class="fas ${icon} me-2"></i>${message}
                   ${ url ? `<a href="${url}" class="text-white ms-2">Ver</a>` : '' }
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2"
@@ -146,51 +158,21 @@
           container.insertAdjacentHTML('beforeend', html);
           new bootstrap.Toast(container.lastElementChild, { delay: 8000 }).show();
         };
-        socket.onerror = err => console.error("WS error:", err);
-        socket.onclose = () => console.warn("WS closed");
       })
       .catch(err => console.error("Auth fetch failed:", err));
-  });
-  
 
-//////////////// boton arriba/////////////////////
-  document.addEventListener('DOMContentLoaded', () => {
+    // 3) Botón scroll-top
     const btn = document.getElementById('scrollTopBtn');
-
-    // Mostrar/ocultar según scroll
     window.addEventListener('scroll', () => {
-      if (window.pageYOffset > 200) {
-        btn.style.display = 'block';
-      } else {
-        btn.style.display = 'none';
-      }
+      btn.style.display = window.pageYOffset > 200 ? 'block' : 'none';
     });
-
-    // Al hacer click: scroll suave arriba
     btn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
+</script>
+{% endblock %}
 
-
-
-  document.addEventListener('DOMContentLoaded', () => {
-    // Intento silencioso de desbloquear el contexto de audio
-    const unlock = new Audio("{% static 'sounds/notify.mp3' %}");
-    const unlock2 = new Audio("{% static 'sounds/message.mp3' %}");
-    
-    unlock.volume = 0;
-    unlock2.volume = 0;
-    // Al reproducir aunque sea con volumen 0, permitimos autoplay en el futuro
-    unlock.play().catch(()=>{ /* no importa si lo bloquean */ });
-    unlock2.play().catch(()=>{ /* no importa si lo bloquean */ });
-
-  });
-
-  
-
-  </script>
-  {% endblock %}
 
 </body>
 </html>
