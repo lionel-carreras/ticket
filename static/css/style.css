@@ -1,12 +1,7 @@
 .pricing-card {
   background: #dae9f1;
-<<<<<<< HEAD
   padding: 0.75rem;
   border-radius: 0.75rem;
-=======
-  padding: 1rem;
-  border-radius: 1rem;
->>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
   border: 0.5vmin solid #05060f;
   box-shadow: 0.4rem 0.4rem #05060f;
   overflow: hidden;
@@ -22,20 +17,12 @@
 }
 .pricing-plan {
   color: #05060f;
-<<<<<<< HEAD
   font-size: 1.1rem;
-=======
-  font-size: 1.3rem;
->>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
   font-weight: 700;
 }
 .price-value {
   color: #05060f;
-<<<<<<< HEAD
   font-size: 0.95rem;
-=======
-  font-size: 1.6rem;
->>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
   font-weight: 700;
 }
 .pricing-note {

@@ -40,13 +40,10 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='users:login'), name='logout'),
 
     path('webpubsub/auth/', views.webpubsub_auth, name='webpubsub_auth'),
-<<<<<<< HEAD
 
     #estadisticas superadmin
     path('dashboard/superadmin', views.superadmin_dashboard, name='dashboard_superadmin'),
     #crear ticket admin
     path('dashboard/admin/create_ticket/', views.create_ticket, name='create_ticket'),
 
-=======
->>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
 ]

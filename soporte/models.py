@@ -16,8 +16,6 @@ class EstadoTicket(models.Model):
     def __str__(self):
         return self.nombre
 
-<<<<<<< HEAD
-=======
 class Ticket(models.Model):
     titulo           = models.CharField("Título", max_length=200)
     descripcion      = models.TextField("Descripción", blank=True)
@@ -68,7 +66,6 @@ class Ticket(models.Model):
         from django.urls import reverse
         return reverse('soporte:detail_ticket', args=[self.pk])
     
->>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
 class CategoriaProblema(models.Model):
     nombre = models.CharField("Nombre de Categoría", max_length=100, unique=True)
 
@@ -104,7 +101,6 @@ class ProblemaComun(models.Model):
     def __str__(self):
         return f"{self.nombre} ({self.codigo_error})"
 
-<<<<<<< HEAD
 
 class Ticket(models.Model):
     titulo           = models.CharField("Título", max_length=200)
@@ -179,8 +175,6 @@ class Ticket(models.Model):
         from django.urls import reverse
         return reverse('soporte:detail_ticket', args=[self.pk])
     
-=======
->>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
     
 
 class Sucursal(models.Model):
