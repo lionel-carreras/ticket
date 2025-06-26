@@ -1,0 +1,12 @@
+{% extends "admin/index.html" %}
+{% load admin_urls static %}
+
+{% block content %}
+  {# Botón encima del listado de apps #}
+  <p>
+    <a href="{% url 'soporte:dashboard_agente' %}" class="button">
+      ← Volver
+    </a>
+  </p>
+  {{ block.super }}
+{% endblock %}
