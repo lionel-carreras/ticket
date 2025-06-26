@@ -3,7 +3,10 @@
 from django.urls import path
 from .views import RoleBasedLoginView
 from django.contrib.auth import views as auth_views
+<<<<<<< HEAD
 from .views import FirstTimePasswordChangeView
+=======
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
 
 app_name = 'users'
 
@@ -18,6 +21,7 @@ urlpatterns = [
         auth_views.LogoutView.as_view(next_page='users:login'),
         name='logout'
     ),
+<<<<<<< HEAD
 
     # Forzar cambio de contraseña la primera vez
     path(
@@ -32,5 +36,7 @@ urlpatterns = [
         ),
         name='password_change_done'
     ),
+=======
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
 ]
 

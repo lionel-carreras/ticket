@@ -23,27 +23,34 @@
 
   {% block extra_css %}
   <style>
+<<<<<<< HEAD
     
     .container {
     max-width: 960px !important;
   }
 
+=======
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
     @keyframes slideInRight {
       from { transform: translateX(100%); opacity: 0; }
       to   { transform: translateX(0);   opacity: 1; }
     }
+<<<<<<< HEAD
 
     @media (max-width: 1366px) {
   html { font-size: 90%; }
   .pricing-card { padding: 0.6rem; }
 }
 
+=======
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
     #toastContainer .toast {
       animation: slideInRight 0.5s ease-out;
       min-width: 20rem;
       max-width: 30rem;
     }
  
+<<<<<<< HEAD
     html {
       font-size: 87.5%; 
     }
@@ -51,6 +58,8 @@
     body {
       font-size: 0.9rem; 
     }
+=======
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
 
 </style>
 {% endblock %}
@@ -61,10 +70,15 @@
   {% include 'soporte/partials/navbar.html' %}
 
 
+<<<<<<< HEAD
   <main class="container my-5">
     
     {% block content %}  {% endblock %}
     
+=======
+  <main class="container my-4">
+    {% block content %}{% endblock %}
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
   </main>
 
   {% include 'soporte/partials/footer.html' %}
@@ -168,7 +182,11 @@
 
     // Al hacer click: scroll suave arriba
     btn.addEventListener('click', () => {
+<<<<<<< HEAD
       window.scrollTo({ top: 0, behavior: 'smooth' })
+=======
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
     });
   });
 

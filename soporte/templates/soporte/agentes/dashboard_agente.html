@@ -1,5 +1,6 @@
 {% extends 'soporte/app.html' %}
 {% load static %}
+<<<<<<< HEAD
 
 {% block title %}Dashboard Agente{% endblock %}
 
@@ -14,6 +15,19 @@
   <h3 
   class="pricing-card text-center mb-4" 
   style="font-style:oblique; background-color:#dae9f1; color:#000;">Mis Tickets</h3><br>
+=======
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+{% block title %}Dashboard Agente{% endblock %}
+
+
+{% block content %}
+<div class="container py-5">
+  <h2 
+  class="pricing-card text-center mb-4" 
+  style="font-style:oblique; background-color:#dae9f1; color:#000;">Mis Tickets</h2><br>
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
   <div class="row gx-4 align-items-stretch">
 
     {# ===== COL 1: ABIERTOS ===== #}
@@ -31,7 +45,10 @@
                 <div class="check-list-item"><i class="fas fa-user" title="Usuario del Ticket"></i> {{ ticket.creado_por.username }}</div>
                 <div class="check-list-item"><i class="fas fa-store" title="Sucursal del Usuario"></i> {{ ticket.creado_por.sucursal.nombre }}</div>
                 <div class="check-list-item"><i class="fas fa-map-marker-alt" title="Sucursal del ticket"></i> {{ ticket.sucursal.nombre }}</div>
+<<<<<<< HEAD
                 <div class="check-list-item"><i class="fa-solid fa-network-wired" title="Sucursal del ticket"></i> {{ ticket.usuario_ip }}</div>
+=======
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
                 <div class="check-list-item"><i class="fas fa-calendar-alt"></i> {{ ticket.fecha_creado|date:"SHORT_DATETIME_FORMAT" }}</div>
               </div>
             </div>
@@ -74,7 +91,10 @@
                 <div class="check-list-item"><i class="fas fa-user" title="Usuario del Ticket"></i> {{ ticket.creado_por.username }}</div>
                 <div class="check-list-item"><i class="fas fa-store" title="Sucursal del Usuario"></i> {{ ticket.creado_por.sucursal.nombre }}</div>
                 <div class="check-list-item"><i class="fas fa-map-marker-alt" title="Sucursal del ticket"></i> {{ ticket.sucursal.nombre }}</div>
+<<<<<<< HEAD
                 <div class="check-list-item"><i class="fa-solid fa-network-wired" title="Sucursal del ticket"></i> {{ ticket.usuario_ip }}</div>
+=======
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
                 <div class="check-list-item"><i class="fas fa-calendar-alt"></i> {{ ticket.fecha_creado|date:"SHORT_DATETIME_FORMAT" }}</div>
               </div>
             </div>
@@ -105,7 +125,10 @@
               <div class="pricing-plan">{{ ticket.titulo }}</div>
               <div class="price-value">Resuelto</div>
               <div class="pricing-note text-truncate">{{ ticket.descripcion }}</div>
+<<<<<<< HEAD
               <div class="check-list-item"><i class="fa-solid fa-network-wired" title="Sucursal del ticket"></i> {{ ticket.usuario_ip }}</div>
+=======
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
               <div class="check-list">
                 <div class="check-list-item"><i class="fas fa-calendar-check"></i> {{ ticket.fecha_actualizado|date:"SHORT_DATETIME_FORMAT" }}</div>
               </div>

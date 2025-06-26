@@ -2,7 +2,10 @@
 {% load static %}
 
 {% block extra_css %}
+<<<<<<< HEAD
 {{ block.super }}
+=======
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 {% endblock %}
 
@@ -42,11 +45,14 @@
             <i class="fas fa-user-check me-2"></i>
             Asignado a: {{ ticket.asignado_a.username }}
           </div>
+<<<<<<< HEAD
 
           <div class="check-list-item">
             <i class="fa-solid fa-network-wired" title="Sucursal del ticket"></i>
              {{ ticket.usuario_ip }}
           </div>
+=======
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
         {% endif %}
         <div class="check-list-item">
           <i class="fas fa-calendar-plus me-2"></i>

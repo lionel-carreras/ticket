@@ -15,18 +15,28 @@ from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from azure.core.credentials import AzureKeyCredential
 from django.conf import settings
 from django.http import JsonResponse
+<<<<<<< HEAD
 from django.db.models import Count
 from users.models import CustomUser
 from django.db.models import Count, F, ExpressionWrapper, DurationField, Avg, Q
+=======
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
 
 
 User = get_user_model()
 
 
+<<<<<<< HEAD
 MAX_IMAGE_SIZE = 2 * 1024 * 1024  # 2 MB
 
 
 
+=======
+
+
+MAX_IMAGE_SIZE = 2 * 1024 * 1024  # 2 MB
+
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
 def group_required(group_name):
     
     def in_group(u):
@@ -177,9 +187,13 @@ def ticket_create(request):
     descripcion_valor = ''
 
     if request.method == 'POST':
+<<<<<<< HEAD
         categoria_id = request.POST.get('categoria')
         problema_id  = request.POST.get('problema')
         usuario_ip  = request.POST.get('ip')
+=======
+        problema_id = request.POST.get('problema')
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
         descripcion = request.POST.get('description', '').strip()
         imagen      = request.FILES.get('imagen')
         sucursal_id = request.POST.get('sucursal')      
@@ -189,7 +203,10 @@ def ticket_create(request):
         if imagen and imagen.size > MAX_IMAGE_SIZE:
             error = "La imagen no puede superar los 2 MB."
         else:
+<<<<<<< HEAD
             categoria    = CategoriaProblema.objects.filter(pk=categoria_id).first()
+=======
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
             problema     = ProblemaComun.objects.filter(pk=problema_id).first()
             estado_abierto = EstadoTicket.objects.get(nombre='Abierto')
             sucursal_sel = Sucursal.objects.filter(pk=sucursal_id).first()
@@ -202,11 +219,16 @@ def ticket_create(request):
                     descripcion   = descripcion,
                     creado_por    = request.user,
                     estado        = estado_abierto,
+<<<<<<< HEAD
                     sucursal      = sucursal_sel,
                     usuario_ip      = usuario_ip,
                     imagen_error  = imagen,
                     categoria     = categoria if categoria else (problema.categoria if problema else None),
                     problema      = problema,
+=======
+                    imagen_error  = imagen,
+                    sucursal      = sucursal_sel
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
                 )
                 return redirect('soporte:dashboard_usuario')
 
@@ -400,6 +422,7 @@ def webpubsub_auth(request):
     groups=[f"user_{user_id}"]
 )
     
+<<<<<<< HEAD
     return JsonResponse({"url": token_data["url"]})
 
 
@@ -599,3 +622,6 @@ def create_ticket(request):
         'error':             error,
         'descripcion_valor': descripcion_valor,
     })
+=======
+    return JsonResponse({"url": token_data["url"]})
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81

@@ -16,6 +16,59 @@ class EstadoTicket(models.Model):
     def __str__(self):
         return self.nombre
 
+<<<<<<< HEAD
+=======
+class Ticket(models.Model):
+    titulo           = models.CharField("Título", max_length=200)
+    descripcion      = models.TextField("Descripción", blank=True)
+    creado_por       = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name="Creado por",
+        related_name="tickets_creados",
+        on_delete=models.CASCADE
+    )
+    asignado_a       = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name="Asignado a",
+        related_name="tickets_asignados",
+        null=True, blank=True,
+        on_delete=models.SET_NULL
+    )
+    estado           = models.ForeignKey(
+        EstadoTicket,
+        verbose_name="Estado",
+        on_delete=models.PROTECT
+    )
+
+    # ← Aquí va la relación a Sucursal del ticket
+    sucursal = models.ForeignKey('soporte.Sucursal',verbose_name="Sucursal del ticket",on_delete=models.PROTECT,db_column='sucursalid_ticket'
+    )
+
+    imagen_error     = models.ImageField(
+        "Imagen del error",
+        upload_to="tickets/",
+        null=True, blank=True
+    )
+
+    motivo_anulacion = models.TextField("Motivo de anulación", null=True, blank=True)
+
+    fecha_creado     = models.DateTimeField("Fecha de creación", auto_now_add=True)
+    fecha_actualizado= models.DateTimeField("Fecha de actualización", auto_now=True)
+
+    class Meta:
+        verbose_name = "Ticket"
+        verbose_name_plural = "Tickets"
+        ordering = ['-fecha_creado']
+
+    def __str__(self):
+        return f"{self.titulo} ({self.estado.nombre})"
+
+    def get_absolute_url(self):
+        # Ajusta el nombre de la URL según tu urls.py
+        from django.urls import reverse
+        return reverse('soporte:detail_ticket', args=[self.pk])
+    
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
 class CategoriaProblema(models.Model):
     nombre = models.CharField("Nombre de Categoría", max_length=100, unique=True)
 
@@ -51,6 +104,7 @@ class ProblemaComun(models.Model):
     def __str__(self):
         return f"{self.nombre} ({self.codigo_error})"
 
+<<<<<<< HEAD
 
 class Ticket(models.Model):
     titulo           = models.CharField("Título", max_length=200)
@@ -125,6 +179,8 @@ class Ticket(models.Model):
         from django.urls import reverse
         return reverse('soporte:detail_ticket', args=[self.pk])
     
+=======
+>>>>>>> 7e7119f6153acca9634f8a5ef8d11d5ad665ff81
     
 
 class Sucursal(models.Model):
