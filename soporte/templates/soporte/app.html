@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> {% block title %}Sistema de Tickets{% endblock %}</title>
+
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
+    crossorigin="anonymous"
+  >
+
+  <!-- FontAwesome -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    rel="stylesheet"
+    crossorigin="anonymous"
+  >
+
+  {% block extra_css %}
+  <style>
+    
+    .container {
+    max-width: 960px !important;
+  }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to   { transform: translateX(0);   opacity: 1; }
+    }
+
+    @media (max-width: 1366px) {
+  html { font-size: 90%; }
+  .pricing-card { padding: 0.6rem; }
+}
+
+    #toastContainer .toast {
+      animation: slideInRight 0.5s ease-out;
+      min-width: 20rem;
+      max-width: 30rem;
+    }
+ 
+    html {
+      font-size: 87.5%; 
+    }
+
+    body {
+      font-size: 0.9rem; 
+    }
+
+</style>
+{% endblock %}
+
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  {% include 'soporte/partials/navbar.html' %}
+
+
+  <main class="container my-5">
+    
+    {% block content %}  {% endblock %}
+    
+  </main>
+
+  {% include 'soporte/partials/footer.html' %}
+
+  
+  <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1080;"></div>
+
+
+  <!-- Bootstrap JS -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+    crossorigin="anonymous"
+  ></script>
+
+ {% block extra_js %}
+  <script>
+    //////////////// notificaciones WebSocket ////////////////
+  document.addEventListener('DOMContentLoaded', () => {
+    // 🔓 Desbloqueo silencioso del audio en el primer click o toque:
+    let audioUnlocked = false;
+    function unlockAudio() {
+      if (audioUnlocked) return;
+      const a = new Audio("{% static 'sounds/notify.mp3' %}");
+      a.volume = 0;
+      a.play().finally(() => {
+        audioUnlocked = true;
+        // opcionalmente guardar en localStorage
+        localStorage.setItem('audioEnabled', 'true');
+      });
+      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('touchstart', unlockAudio);
+    }
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('touchstart', unlockAudio);
+
+    // → Ahora abrimos el WebSocket y gestionamos las notificaciones:
+    const userId = "{{ request.user.id|default:'' }}";
+    fetch("{% url 'soporte:webpubsub_auth' %}?hub=alerts")
+      .then(res => res.json())
+      .then(data => {
+        const socket = new WebSocket(data.url, "json.webpubsub.azure.v1");
+        socket.onopen = () => socket.send(JSON.stringify({
+          type: "joinGroup", group: `user_${userId}`
+        }));
+        socket.onmessage = e => {
+          const env = JSON.parse(e.data);
+          if (env.type !== "message") return;
+          let payload = env.data;
+          if (typeof payload === "string") {
+            try { payload = JSON.parse(payload); } catch {}
+          }
+          const { message, url, notification_type } = payload;
+          // 🎵 Elegimos sonido:
+          const soundSrc = notification_type === 'message'
+            ? "{% static 'sounds/message.mp3' %}"
+            : "{% static 'sounds/notify.mp3' %}";
+          const iconClass = notification_type === 'message' ? 'fa-envelope' : 'fa-bell';
+          // 🔊 Reproducimos si ya desbloqueó:
+          if (audioUnlocked || localStorage.getItem('audioEnabled')) {
+            const snd = new Audio(soundSrc);
+            snd.volume = 0.5;
+            snd.play().catch(()=>{});
+          }
+          // 🍞 Mostramos toast:
+          const html = `
+            <div class="toast align-items-center text-white bg-info mb-3"
+                 role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="d-flex">
+                <div class="toast-body">
+                  <i class="fas ${iconClass} me-2"></i>${message}
+                  ${ url ? `<a href="${url}" class="text-white ms-2">Ver</a>` : '' }
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2"
+                        data-bs-dismiss="toast" aria-label="Cerrar"></button>
+              </div>
+            </div>`;
+          const container = document.getElementById('toastContainer');
+          container.insertAdjacentHTML('beforeend', html);
+          new bootstrap.Toast(container.lastElementChild, { delay: 8000 }).show();
+        };
+        socket.onerror = err => console.error("WS error:", err);
+        socket.onclose = () => console.warn("WS closed");
+      })
+      .catch(err => console.error("Auth fetch failed:", err));
+  });
+  
+
+//////////////// boton arriba/////////////////////
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('scrollTopBtn');
+
+    // Mostrar/ocultar según scroll
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 200) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+
+    // Al hacer click: scroll suave arriba
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    });
+  });
+
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Intento silencioso de desbloquear el contexto de audio
+    const unlock = new Audio("{% static 'sounds/notify.mp3' %}");
+    const unlock2 = new Audio("{% static 'sounds/message.mp3' %}");
+    
+    unlock.volume = 0;
+    unlock2.volume = 0;
+    // Al reproducir aunque sea con volumen 0, permitimos autoplay en el futuro
+    unlock.play().catch(()=>{ /* no importa si lo bloquean */ });
+    unlock2.play().catch(()=>{ /* no importa si lo bloquean */ });
+
+  });
+
+  
+
+  </script>
+  {% endblock %}
+
+</body>
+</html>
+

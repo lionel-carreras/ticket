@@ -1,0 +1,120 @@
+{% extends 'soporte/app.html' %}
+{% load static %}
+
+{% block extra_css %}
+{{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block title %}Detalle de Ticket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <a href="{% url 'soporte:dashboard_usuario' %}" class="btn btn-secondary mb-4">
+    ← Volver
+  </a>
+
+  <div class="pricing-card shadow-sm mb-4">
+    <div class="pricing-block-content">
+      <div class="pricing-plan">{{ ticket.titulo }}</div>
+      <div class="price-value">{{ ticket.estado.nombre }}</div>
+      {% if ticket.imagen_error %}
+        <div class="mb-3 text-center">
+          <img src="{{ ticket.imagen_error.url }}"
+               alt="Imagen del error"
+               class="img-fluid rounded"
+               style="max-height:200px;">
+        </div>
+      {% endif %}
+      <div class="pricing-note">{{ ticket.descripcion|default:"— sin descripción —" }}</div>
+      <div class="check-list">
+        <div class="check-list-item">
+          <i class="fas fa-store me-2"></i>
+          Sucursal del ticket: {{ ticket.sucursal.nombre }}
+        </div>
+        <div class="check-list-item">
+          <i class="fas fa-user me-2"></i>
+          Creado por: {{ ticket.creado_por.username }}
+          <small class="text-muted ms-1">({{ ticket.creado_por.sucursal.nombre }})</small>
+        </div>
+        <div class="check-list-item">
+          <i class="fas fa-calendar-plus me-2"></i>
+          Creado: {{ ticket.fecha_creado|date:"SHORT_DATETIME_FORMAT" }}
+        </div>
+        <div class="check-list-item">
+          <i class="fas fa-calendar-alt me-2"></i>
+          Actualizado: {{ ticket.fecha_actualizado|date:"SHORT_DATETIME_FORMAT" }}
+        </div>
+        {% if ticket.motivo_anulacion %}
+          <div class="check-list-item text-danger">
+            <i class="fas fa-ban me-2"></i>
+            Motivo anulación: {{ ticket.motivo_anulacion }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <h5 class="mb-3">Mensajes</h5>
+  <div class="overflow-auto mb-4" style="max-height: 50vh;">
+    <div class="d-flex flex-column gap-3">
+      {% for m in mensajes %}
+        <div class="pricing-card {% if m.emisor == request.user %}bg-light text-end{% endif %}">
+          <div class="pricing-block-content">
+            <div class="check-list-item">
+              <i class="fas fa-user-circle me-2"></i>
+              <strong>{{ m.emisor.username }}</strong>
+              <small class="text-muted ms-2">{{ m.fecha_envio|date:"SHORT_DATETIME_FORMAT" }}</small>
+            </div>
+            <div class="pricing-note mt-2">{{ m.contenido }}</div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-muted">No hay mensajes aún.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if ticket.estado_id == 3 %}
+    <div class="alert alert-warning">
+      Este ticket está cerrado. No puedes enviar mensajes.
+    </div>
+  {% elif ticket.asignado_a %}
+    <form method="post" class="mb-5">
+      {% csrf_token %}
+      <div class="mb-3">
+        {{ form.contenido.label_tag }}
+        {{ form.contenido }}
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-paper-plane me-1"></i> Enviar mensaje
+      </button>
+    </form>
+  {% else %}
+    <div class="alert alert-info">
+      En cuanto un agente sea asignado, podrás enviarle mensajes.
+    </div>
+  {% endif %}
+
+  <button id="scrollTopBtn"
+          class="btn btn-secondary position-fixed"
+          style="bottom: 30px; right: 30px; z-index: 1000; display:none;"
+          aria-label="Subir arriba">
+    ↑
+  </button>
+</div>
+
+<script>
+  // Scroll-to-top
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('scrollTopBtn');
+    window.addEventListener('scroll', () => {
+      btn.style.display = window.pageYOffset > 200 ? 'block' : 'none';
+    });
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+{% endblock %}

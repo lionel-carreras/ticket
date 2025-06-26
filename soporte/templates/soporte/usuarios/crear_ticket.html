@@ -1,0 +1,169 @@
+{% extends 'soporte/app.html' %}
+{% load static %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+  .ticket-form {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+</style>
+{% endblock %}
+
+{% block title %}Crear Ticket{% endblock %}
+
+{% block content %}
+<div class="container my-4 ticket-form">
+ <h2 
+  class="pricing-card text-center mb-4" 
+  style="font-style:oblique; background-color:#dae9f1; color:#000;">Nuevo Ticket</h2><br>
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <label for="id_sucursal_ticket" class="form-label">Sucursal</label>
+        <select id="id_sucursal_ticket" name="sucursal" class="form-select">
+          <option value="" disabled selected>Seleccioná tu sucursal</option>
+          {% for suc in sucursales %}
+            <option value="{{ suc.id }}">{{ suc.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+     <div class="col-12 col-md-6">
+        <label for="id_categoria" class="form-label">Categoría</label>
+        <select id="id_categoria" name="categoria" class="form-select" required>
+          <option value="" disabled selected>Seleccione una categoría</option>
+          {% for cat in categorias %}
+            <option value="{{ cat.id }}">{{ cat.nombre }}</option>
+          {% endfor %}
+          <option value="solicitar">No existe la categoría? Solicítala acá</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <label for="id_problema" class="form-label">Problema común</label>
+        <select id="id_problema" name="problema" class="form-select" disabled>
+          <option value="" disabled selected>Seleccione un problema</option>
+          {% for problema in problemas %}
+            <option value="{{ problema.id }}" data-categoria="{{ problema.categoria_id }}">
+              {{ problema.nombre }}
+            </option>
+          {% endfor %}
+          <!-- opción fija al final -->
+          <option value="solicitar_problema">No existe el problema? Solicítalo acá</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-6">
+        <label for="id_ip" class="form-label">TU IP</label>
+        <input
+          type="text"
+          id="id_ip"
+          name="ip"
+          class="form-control"
+        >
+      </div>
+
+      <div class="col-12">
+        <label for="id_description" class="form-label">Descripción (opcional)</label>
+        <textarea
+          id="id_description"
+          name="description"
+          rows="4"
+          class="form-control"
+          placeholder="Agregá detalles adicionales…"
+        >{{ descripcion_valor }}</textarea>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <label for="id_imagen" class="form-label">Imagen del error (máx. 2 MB)</label>
+        <input
+          type="file"
+          id="id_imagen"
+          name="imagen"
+          accept="image/*"
+          class="form-control"
+        >
+      </div>
+
+      <div class="col-12 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Enviar</button>
+        <a href="{% url 'soporte:dashboard_usuario' %}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const categoriaSelect = document.getElementById('id_categoria');
+  const problemaSelect  = document.getElementById('id_problema');
+  const todasOpciones   = Array.from(problemaSelect.options);
+
+  categoriaSelect.addEventListener('change', function() {
+    const catId = this.value;
+    problemaSelect.disabled = !catId;
+    problemaSelect.innerHTML = '<option value="" disabled selected>Seleccione un problema</option>';
+    todasOpciones.forEach(opt => {
+      if (opt.dataset.categoria === catId) {
+        problemaSelect.appendChild(opt);
+      }
+    });
+  });
+});
+
+
+
+////// solicitar categoria nueva///////
+   document.getElementById('id_categoria').addEventListener('change', function() {
+    if (this.value === 'solicitar') {
+      window.open(
+        'https://api.whatsapp.com/send?phone=5493413588714&text=Quiero%20agregar%20una%20nueva%20categoría',
+        '_blank'
+      );
+      // Reiniciamos el select para que no se quede en "solicitar"
+      this.value = '';
+    }
+  });
+
+
+  ////// solicitar problema nuevo///////
+  document.addEventListener('DOMContentLoaded', function() {
+  const categoriaSelect = document.getElementById('id_categoria');
+  const problemaSelect  = document.getElementById('id_problema');
+  const allOptions      = Array.from(problemaSelect.querySelectorAll('option[data-categoria]'));
+
+  // filtrar problemas por categoría
+  categoriaSelect.addEventListener('change', function() {
+    const catId = this.value;
+    problemaSelect.disabled = !catId;
+    problemaSelect.innerHTML = '<option value="" disabled selected>Seleccione un problema</option>';
+    allOptions.forEach(opt => {
+      if (opt.dataset.categoria === catId) {
+        problemaSelect.appendChild(opt);
+      }
+    });
+    // re-agrega la opción de “solicitar”
+    problemaSelect.insertAdjacentHTML('beforeend',
+      '<option value="solicitar_problema">No existe el problema? Solicítalo acá</option>'
+    );
+  });
+
+  // al elegir “solicitar”, abrimos WhatsApp
+  problemaSelect.addEventListener('change', function() {
+    if (this.value === 'solicitar_problema') {
+      window.open(
+        'https://api.whatsapp.com/send?phone=5493413588714&text=Quiero%20agregar%20un%20nuevo%20problema%20común',
+        '_blank'
+      );
+      this.value = '';  // reset
+    }
+  });
+});
+</script>
+{% endblock %}
