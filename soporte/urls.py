@@ -25,7 +25,7 @@ urlpatterns = [
     #detalle ticket agente
     path('ticket_agente/<int:ticket_id>/', views.detail_ticket, name='detail_ticket'),
     #asignar ticket agente
-    path('ticket/<int:ticket_id>/asignar/', views.ticket_accept, name='ticket_assign'),
+    path('ticket/<int:ticket_id>/asignar/', views.ticket_assign, name='ticket_assign'),
     #resolver ticket agente
     path('ticket/<int:ticket_id>/resolver/', views.ticket_resolve, name='ticket_resolve'),
     #anular ticket agente
